@@ -1,0 +1,14 @@
+* {
+  font-family: 'Cutive Mono', monospace !important;
+  font-size: 16px;
+}
+
+.text {
+  width: 100%;
+  outline: none;
+}
+.text-container {
+  width: 600px;
+  margin: 0 auto;
+}
+
