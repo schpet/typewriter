@@ -1,11 +1,18 @@
 * {
   font-family: 'Cutive Mono', monospace !important;
-  font-size: 16px;
+  font-size: 22px;
+  line-height: 2;
+}
+
+html, body {
+  margin: 0;
 }
 
 .text {
   width: 100%;
   outline: none;
+  min-height: 500px;
+  margin-top: 20px;
 }
 .text-container {
   width: 600px;
