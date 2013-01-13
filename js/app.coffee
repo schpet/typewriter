@@ -19,11 +19,8 @@ chosenSound = 0
 withinRange = (sample, min, max)->
   return sample > min and sample < max
 
-console.log 'sup'
-
 $txt = $('#text')
 $txt.on 'keydown', (e)->
-  console.log 'supx'
   # alphanumeric and punctuation
   if withinRange(e.keyCode, 48, 90) or withinRange(e.keyCode, 186, 222)
     chosenSound = ++chosenSound % snd.length

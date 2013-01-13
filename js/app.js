@@ -16,12 +16,9 @@
     return sample > min && sample < max;
   };
 
-  console.log('sup');
-
   $txt = $('#text');
 
   $txt.on('keydown', function(e) {
-    console.log('supx');
     if (withinRange(e.keyCode, 48, 90) || withinRange(e.keyCode, 186, 222)) {
       chosenSound = ++chosenSound % snd.length;
       snd[chosenSound].play();

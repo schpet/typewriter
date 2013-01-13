@@ -5,7 +5,10 @@ TODO
 ====
 
 - words move up as you type like on a piece of paper
-- make it more like a typewriter where you have to x over stuff to delete
+- x over stuff to delete
+- make the tab key tab
+- make quick typing sound more rad
+
 - secret url for publishing
 - exit warning
 - save to browser checkbox
