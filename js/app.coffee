@@ -1,12 +1,12 @@
 snd = [
-  new Audio("sounds/k1.wav")
-  new Audio("sounds/k2.wav")
-  new Audio("sounds/k3.wav")
-  new Audio("sounds/k4.wav")
-  new Audio("sounds/k1.wav")
-  new Audio("sounds/k2.wav")
-  new Audio("sounds/k3.wav")
-  new Audio("sounds/k4.wav")
+  new Audio("sounds/k1p.wav")
+  new Audio("sounds/k2p.wav")
+  new Audio("sounds/k3p.wav")
+  new Audio("sounds/k4p.wav")
+  new Audio("sounds/k1p.wav")
+  new Audio("sounds/k2p.wav")
+  new Audio("sounds/k3p.wav")
+  new Audio("sounds/k4p.wav")
 ]
 
 sounds =
