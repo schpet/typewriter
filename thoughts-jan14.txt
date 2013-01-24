@@ -1,0 +1,27 @@
+
+TODAY WAS A VERY GOOD DAY
+=========================
+
+some really important features for typewriter, roughly in this order:
+
+- export as PDF
+- export as .txt
+- automatic return carriage noise when it drops a line
+  because you typed too far
+- janky moving up of text, and it moving side to side
+- having to x out characters to delete them 
+  fuck canvas, having text is important
+- make the tab key work!
+- consider cursor-less text input without text selection in 
+  the edit mode to make it more constrained
+
+
+bugs:
+- no sound for colon, semi colon, other keys (maybe black list keys instead? idk
+- pasting can keep formatting
+- 
+
+whatever ideas:
+- make links clickable
+- save to account, private or public
+
