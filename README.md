@@ -20,4 +20,4 @@ TODO
 - left and right panning but its [not possible][dang] to do with ```<audio>```
   yet
 
-[dang][http://stackoverflow.com/questions/5123844/change-left-right-balance-on-playing-audio-in-javascript]
+[dang]: [http://stackoverflow.com/questions/5123844/change-left-right-balance-on-playing-audio-in-javascript]
