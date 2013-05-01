@@ -14,7 +14,7 @@ html, body {
   outline: none;
   min-height: 500px;
   margin-top: 20px;
-  visibility: hidden;
+  color: rgba(0,0,0,0.1);
 }
 
 .text-container {
