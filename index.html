@@ -6,15 +6,47 @@
     <link href='css/style.css' rel='stylesheet' type='text/css'>
   </head>
   <body>
-    <div class="text-container">
-      <div id="text" class="text" contenteditable>
-      </div>
-    </div>
-    <canvas id="paper" class="paper" width="500" height="500"></canvas>
+
+    <!--<button id='go' style='position: fixed; top: 100px; z-index: 10000;'>Go</button>-->
+    <!--<button id='update' style='position: fixed; top: 200px; z-index: 10000;'>up</button>-->
+
     <div class="cursor"></div>
+    <div class="paper-container">
+      <canvas id="paper" class="paper" width="500" height="500"></canvas>
+    </div>
+
+
+    <div class="text-container">
+      <textarea id="text" class="text" contenteditable>
+      </textarea>
+    </div>
 
     <script src="js/lib/jquery-1.7.1.js"></script>
+    <script src="js/lib/three.min.js"></script>
+    <script src="js/lib/stats.min.js"></script>
     <script src="js/app.js"></script>
+
+    <script>
+      var stats = new Stats();
+      stats.setMode(0); // 0: fps, 1: ms
+
+      // Align top-left
+      stats.domElement.style.position = 'absolute';
+      stats.domElement.style.left = '0px';
+      stats.domElement.style.top = '0px';
+
+      document.body.appendChild( stats.domElement );
+
+      setInterval( function () {
+
+          stats.begin();
+
+          // your code goes here
+
+          stats.end();
+
+      }, 1000 / 60 );
+    </script>
 
     <script type="text/javascript">
       var _gaq = _gaq || [];

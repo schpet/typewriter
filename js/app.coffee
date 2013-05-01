@@ -1,3 +1,5 @@
+"use strict"
+
 window.keys =
   ENTER: 13
   SPACE: 32
@@ -18,7 +20,6 @@ class SoundManager
 
   options:
     volume: 0.75
-    target: '#text'
 
   constructor: ->
     @loadAudioFiles()
@@ -70,8 +71,9 @@ class SoundManager
   # TODO make this more generic, as an option you
   # can pass in
   setupDom: ->
-    $txt = $(@options.target)
-    $txt.on 'keydown', (e)=>
+    $(document).on 'keydown', (e)=>
+      return if (e.metaKey || e.ctrlKey || e.altKey )
+
       @keystrokeCount++
 
       # alphanumeric and punctuation
@@ -83,18 +85,23 @@ class SoundManager
           when keys.SPACE then played = @_playSound 'space'
           when keys.BACKSPACE then played = @_playSound 'backspace'
 
-    $(document).on 'click', -> $txt.focus()
-    $txt.focus()
+      true
 
-new SoundManager()
 
 class Paper
+
+  options:
+    maxColumns: 32
+
   constructor: (id)->
     @canvas = document.getElementById(id)
     @$canvas = $(@canvas)
     @ctx = @canvas.getContext '2d'
 
-    @ctx.fillStyle = "rgba(255, 50, 50, 0.7)"
+    @ctx.fillStyle = "rgba(255,255,204, 0.3)"
+    @ctx.fillRect(0, 0, @canvas.width, @canvas.height)
+
+    @ctx.fillStyle = "rgba(55, 80, 0, 0.7)"
     @ctx.font = "20px monospace"
 
     @charWidth = 15
@@ -103,13 +110,18 @@ class Paper
     @col = 0
     @row = 0
 
+    @dontPrint = false
+
     $(document).on 'keydown', @adjustPosition
     $(document).on 'keypress', @printCharacter
 
   adjustPosition: (e)=>
+    return if (e.metaKey || e.ctrlKey || e.altKey )
+
     switch e.keyCode
       when keys.ENTER
         @adjustRow(1)
+
       when keys.SPACE
         @adjustCol(1)
       when keys.BACKSPACE
@@ -117,20 +129,100 @@ class Paper
       else
         @adjustCol(1) if KeyTools.normal(e.keyCode)
 
+    true
+
   adjustRow: (value)=>
     @row += value
     @col = 0
     @$canvas.css('-webkit-transform', "translate(0,#{-@row * @lineHeight}px)")
 
   adjustCol: (value)=>
-    if @col + value >= 0
-      @col += value
-      @left -= value * @charWidth
-      @$canvas.css('-webkit-transform', "translate(#{-@col * @charWidth}px,#{-@row * @lineHeight}px)")
+    adjusted = @col + value
+
+    return if adjusted < 0
+
+    if adjusted > @options.maxColumns
+      @dontPrint = true
+      return
+
+    @dontPrint = false if @dontPrint
+
+    @col = adjusted
+    @left -= value * @charWidth
+    @$canvas.css('-webkit-transform', "translate(#{-@col * @charWidth}px,#{-@row * @lineHeight}px)")
+
 
   printCharacter: (e)=>
-    @ctx.fillText(String.fromCharCode(e.charCode), @charWidth * @col, @lineHeight * @row + @lineHeight)
+    if @dontPrint
+      return
 
-new Paper('paper')
+    @ctx.save()
+    @ctx.translate(@charWidth * @col, @lineHeight * @row + @lineHeight)
 
+    rotationRange = 0.03
+    rotation = -(rotationRange / 2) + Math.random() * rotationRange
+
+    @ctx.rotate(rotation)
+    @ctx.fillText(String.fromCharCode(e.charCode), 0, 0)
+    @ctx.restore()
+
+    # XXX
+    texture = new THREE.Texture( @canvas )
+    texture.needsUpdate = true
+    mesh.material.map = texture
+    mesh.material.needsUpdate = true
+
+    true
+
+$txt = $('#text')
+$(document).on 'click', -> $txt.focus()
+$txt.focus()
+
+
+camera = undefined
+scene = undefined
+renderer = undefined
+geometry = undefined
+material = undefined
+mesh = undefined
+
+#init()
+#animate()
+
+init =(texture)->
+  size =
+    width: window.innerWidth / 2
+    height: window.innerHeight
+
+  camera = new THREE.PerspectiveCamera(75, size.width / size.height, 1, 10000)
+  #camera.position.z = 1000
+  camera.position.z = 500
+  scene = new THREE.Scene()
+  #geometry = new THREE.CubeGeometry(500, 500, 500)
+  geometry = new THREE.CylinderGeometry(80, 80, 400, 25, 1, true)
+
+  material = new THREE.MeshBasicMaterial(
+    color: 0xff0000
+    wireframe: true
+    #map: texture
+  )
+  mesh = new THREE.Mesh(geometry, material)
+  scene.add mesh
+  renderer = new THREE.CanvasRenderer()
+  renderer.setSize size.width, size.height
+  document.body.appendChild renderer.domElement
+
+animate = ->
+  requestAnimationFrame animate
+  #mesh.rotation.z = Math.PI / 2
+  #mesh.rotation.x -= 0.03
+  mesh.rotation.y -= 0.01
+  renderer.render scene, camera
+
+sounds = new SoundManager()
+paper = new Paper('paper')
+texture = new THREE.Texture( paper.canvas )
+texture.needsUpdate = true
+init(texture)
+animate()
 
