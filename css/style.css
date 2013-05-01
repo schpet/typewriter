@@ -14,7 +14,9 @@ html, body {
   outline: none;
   min-height: 500px;
   margin-top: 20px;
+  visibility: hidden;
 }
+
 .text-container {
   width: 800px;
 }
