@@ -1,3 +1,17 @@
+window.keys =
+  ENTER: 13
+  SPACE: 32
+  BACKSPACE: 8
+
+class KeyTools
+
+  @normal: (keyCode)=>
+    return @_withinRange(keyCode, 48, 90) or @_withinRange(keyCode, 186, 222)
+
+  @_withinRange: (sample, min, max)->
+    return sample >= min and sample <= max
+
+
 class SoundManager
 
   SOUND_BASE: 'sounds/'
@@ -61,18 +75,62 @@ class SoundManager
       @keystrokeCount++
 
       # alphanumeric and punctuation
-      if @_withinRange(e.keyCode, 48, 90) or @_withinRange(e.keyCode, 186, 222)
+      if KeyTools.normal(e.keyCode)
         played = @_playSound 'standard'
       else
         switch e.keyCode
-          when 13 then played = @_playSound 'enter'
-          when 32 then played = @_playSound 'space'
-          when 8 then played = @_playSound 'backspace'
-
-        if !played
-          e.preventDefault()
+          when keys.ENTER then played = @_playSound 'enter'
+          when keys.SPACE then played = @_playSound 'space'
+          when keys.BACKSPACE then played = @_playSound 'backspace'
 
     $(document).on 'click', -> $txt.focus()
     $txt.focus()
 
 new SoundManager()
+
+class Paper
+  constructor: (id)->
+    @canvas = document.getElementById(id)
+    @$canvas = $(@canvas)
+    @ctx = @canvas.getContext '2d'
+
+    @ctx.fillStyle = "rgba(255, 50, 50, 0.7)"
+    @ctx.font = "20px monospace"
+
+    @charWidth = 15
+    @lineHeight = 30
+
+    @col = 0
+    @row = 0
+
+    $(document).on 'keydown', @adjustPosition
+    $(document).on 'keypress', @printCharacter
+
+  adjustPosition: (e)=>
+    switch e.keyCode
+      when keys.ENTER
+        @adjustRow(1)
+      when keys.SPACE
+        @adjustCol(1)
+      when keys.BACKSPACE
+        @adjustCol(-1)
+      else
+        @adjustCol(1) if KeyTools.normal(e.keyCode)
+
+  adjustRow: (value)=>
+    @row += value
+    @col = 0
+    @$canvas.css('-webkit-transform', "translate(0,#{-@row * @lineHeight}px)")
+
+  adjustCol: (value)=>
+    if @col + value >= 0
+      @col += value
+      @left -= value * @charWidth
+      @$canvas.css('-webkit-transform', "translate(#{-@col * @charWidth}px,#{-@row * @lineHeight}px)")
+
+  printCharacter: (e)=>
+    @ctx.fillText(String.fromCharCode(e.charCode), @charWidth * @col, @lineHeight * @row + @lineHeight)
+
+new Paper('paper')
+
+

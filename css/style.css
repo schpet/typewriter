@@ -9,13 +9,27 @@ html, body {
 }
 
 .text {
-  width: 100%;
+  width: 500px;
+  float: left;
   outline: none;
   min-height: 500px;
   margin-top: 20px;
 }
 .text-container {
   width: 800px;
-  margin: 0 auto;
 }
 
+.paper {
+  width: 500px;
+  margin-top: 100px;
+  border: 1px solid black;
+  -webkit-transition: -webkit-transform 100ms 20ms;
+}
+.cursor {
+  position: absolute;
+  display: block;
+  width: 14px;
+  border-bottom: 2px solid rgba(0,0,0,0.5);
+  left: 520px;
+  top: 136px;
+}
