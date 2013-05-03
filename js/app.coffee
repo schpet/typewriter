@@ -92,20 +92,28 @@ class Paper
 
   options:
     maxColumns: 32
+    maxRows: 32
+    charWidth: 15
+    lineHeight: 30
 
-  constructor: (id)->
-    @canvas = document.getElementById(id)
+  constructor: (containerId, options = {})->
+    container = document.getElementById containerId
+    @canvas = document.createElement 'canvas'
+
+    @canvas.width = @options.maxColumns * @options.charWidth
+    @canvas.height = @options.maxRows * @options.lineHeight
+    container.appendChild @canvas
+
     @$canvas = $(@canvas)
     @ctx = @canvas.getContext '2d'
 
-    @ctx.fillStyle = "rgba(255,255,204, 0.3)"
+    @ctx.fillStyle = "rgba(255,255,204, 0.9)"
+    #@ctx.fillStyle = "rgb(200, 0, 0)"
     @ctx.fillRect(0, 0, @canvas.width, @canvas.height)
 
     @ctx.fillStyle = "rgba(55, 80, 0, 0.7)"
     @ctx.font = "20px monospace"
 
-    @charWidth = 15
-    @lineHeight = 30
 
     @col = 0
     @row = 0
@@ -134,12 +142,14 @@ class Paper
   adjustRow: (value)=>
     @row += value
     @col = 0
-    @$canvas.css('-webkit-transform', "translate(0,#{-@row * @lineHeight}px)")
+    @$canvas.css('-webkit-transform', "translate(0,#{-@row * @options.lineHeight}px)")
 
   adjustCol: (value)=>
     adjusted = @col + value
 
-    return if adjusted < 0
+    if adjusted < 0
+      @adjustRow(-1)
+      return
 
     if adjusted > @options.maxColumns
       @dontPrint = true
@@ -148,8 +158,8 @@ class Paper
     @dontPrint = false if @dontPrint
 
     @col = adjusted
-    @left -= value * @charWidth
-    @$canvas.css('-webkit-transform', "translate(#{-@col * @charWidth}px,#{-@row * @lineHeight}px)")
+    @left -= value * @options.charWidth
+    @$canvas.css('-webkit-transform', "translate(#{-@col * @options.charWidth}px,#{-@row * @options.lineHeight}px)")
 
 
   printCharacter: (e)=>
@@ -157,9 +167,9 @@ class Paper
       return
 
     @ctx.save()
-    @ctx.translate(@charWidth * @col, @lineHeight * @row + @lineHeight)
+    @ctx.translate(@options.charWidth * @col, @options.lineHeight * @row + @options.lineHeight)
 
-    rotationRange = 0.03
+    rotationRange = 0.12
     rotation = -(rotationRange / 2) + Math.random() * rotationRange
 
     @ctx.rotate(rotation)
@@ -186,29 +196,27 @@ geometry = undefined
 material = undefined
 mesh = undefined
 
-#init()
-#animate()
-
 init =(texture)->
   size =
     width: window.innerWidth / 2
     height: window.innerHeight
 
   camera = new THREE.PerspectiveCamera(75, size.width / size.height, 1, 10000)
-  #camera.position.z = 1000
   camera.position.z = 500
   scene = new THREE.Scene()
   #geometry = new THREE.CubeGeometry(500, 500, 500)
   geometry = new THREE.CylinderGeometry(80, 80, 400, 25, 1, true)
 
   material = new THREE.MeshBasicMaterial(
-    color: 0xff0000
-    wireframe: true
-    #map: texture
+    #color: 0xff0000
+    #wireframe: true
+    map: texture
   )
   mesh = new THREE.Mesh(geometry, material)
+  mesh.doubleSided = true
   scene.add mesh
-  renderer = new THREE.CanvasRenderer()
+  #renderer = new THREE.CanvasRenderer()
+  renderer = new THREE.WebGLRenderer( { antialias: true } );
   renderer.setSize size.width, size.height
   document.body.appendChild renderer.domElement
 
@@ -220,7 +228,7 @@ animate = ->
   renderer.render scene, camera
 
 sounds = new SoundManager()
-paper = new Paper('paper')
+paper = new Paper('paper-container')
 texture = new THREE.Texture( paper.canvas )
 texture.needsUpdate = true
 init(texture)

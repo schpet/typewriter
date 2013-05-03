@@ -142,10 +142,17 @@
   Paper = (function() {
 
     Paper.prototype.options = {
-      maxColumns: 32
+      maxColumns: 32,
+      maxRows: 32,
+      charWidth: 15,
+      lineHeight: 30
     };
 
-    function Paper(id) {
+    function Paper(containerId, options) {
+      var container;
+      if (options == null) {
+        options = {};
+      }
       this.printCharacter = __bind(this.printCharacter, this);
 
       this.adjustCol = __bind(this.adjustCol, this);
@@ -153,15 +160,18 @@
       this.adjustRow = __bind(this.adjustRow, this);
 
       this.adjustPosition = __bind(this.adjustPosition, this);
-      this.canvas = document.getElementById(id);
+
+      container = document.getElementById(containerId);
+      this.canvas = document.createElement('canvas');
+      this.canvas.width = this.options.maxColumns * this.options.charWidth;
+      this.canvas.height = this.options.maxRows * this.options.lineHeight;
+      container.appendChild(this.canvas);
       this.$canvas = $(this.canvas);
       this.ctx = this.canvas.getContext('2d');
-      this.ctx.fillStyle = "rgba(255,255,204, 0.3)";
+      this.ctx.fillStyle = "rgba(255,255,204, 0.9)";
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.fillStyle = "rgba(55, 80, 0, 0.7)";
       this.ctx.font = "20px monospace";
-      this.charWidth = 15;
-      this.lineHeight = 30;
       this.col = 0;
       this.row = 0;
       this.dontPrint = false;
@@ -194,13 +204,14 @@
     Paper.prototype.adjustRow = function(value) {
       this.row += value;
       this.col = 0;
-      return this.$canvas.css('-webkit-transform', "translate(0," + (-this.row * this.lineHeight) + "px)");
+      return this.$canvas.css('-webkit-transform', "translate(0," + (-this.row * this.options.lineHeight) + "px)");
     };
 
     Paper.prototype.adjustCol = function(value) {
       var adjusted;
       adjusted = this.col + value;
       if (adjusted < 0) {
+        this.adjustRow(-1);
         return;
       }
       if (adjusted > this.options.maxColumns) {
@@ -211,8 +222,8 @@
         this.dontPrint = false;
       }
       this.col = adjusted;
-      this.left -= value * this.charWidth;
-      return this.$canvas.css('-webkit-transform', "translate(" + (-this.col * this.charWidth) + "px," + (-this.row * this.lineHeight) + "px)");
+      this.left -= value * this.options.charWidth;
+      return this.$canvas.css('-webkit-transform', "translate(" + (-this.col * this.options.charWidth) + "px," + (-this.row * this.options.lineHeight) + "px)");
     };
 
     Paper.prototype.printCharacter = function(e) {
@@ -221,8 +232,8 @@
         return;
       }
       this.ctx.save();
-      this.ctx.translate(this.charWidth * this.col, this.lineHeight * this.row + this.lineHeight);
-      rotationRange = 0.03;
+      this.ctx.translate(this.options.charWidth * this.col, this.options.lineHeight * this.row + this.options.lineHeight);
+      rotationRange = 0.12;
       rotation = -(rotationRange / 2) + Math.random() * rotationRange;
       this.ctx.rotate(rotation);
       this.ctx.fillText(String.fromCharCode(e.charCode), 0, 0);
@@ -269,12 +280,14 @@
     scene = new THREE.Scene();
     geometry = new THREE.CylinderGeometry(80, 80, 400, 25, 1, true);
     material = new THREE.MeshBasicMaterial({
-      color: 0xff0000,
-      wireframe: true
+      map: texture
     });
     mesh = new THREE.Mesh(geometry, material);
+    mesh.doubleSided = true;
     scene.add(mesh);
-    renderer = new THREE.CanvasRenderer();
+    renderer = new THREE.WebGLRenderer({
+      antialias: true
+    });
     renderer.setSize(size.width, size.height);
     return document.body.appendChild(renderer.domElement);
   };
@@ -287,7 +300,7 @@
 
   sounds = new SoundManager();
 
-  paper = new Paper('paper');
+  paper = new Paper('paper-container');
 
   texture = new THREE.Texture(paper.canvas);
 
