@@ -13,7 +13,6 @@ class KeyTools
   @_withinRange: (sample, min, max)->
     return sample >= min and sample <= max
 
-
 class SoundManager
 
   SOUND_BASE: 'sounds/'
@@ -112,7 +111,7 @@ class Paper
     @ctx.fillRect(0, 0, @canvas.width, @canvas.height)
 
     @ctx.fillStyle = "rgba(55, 80, 0, 0.7)"
-    @ctx.font = "20px monospace"
+    @ctx.font = "20px Cutive Mono"
 
 
     @col = 0
@@ -142,7 +141,7 @@ class Paper
   adjustRow: (value)=>
     @row += value
     @col = 0
-    @$canvas.css('-webkit-transform', "translate(0,#{-@row * @options.lineHeight}px)")
+    @$canvas.css('transform', "translate(0,#{-@row * @options.lineHeight}px)")
 
   adjustCol: (value)=>
     adjusted = @col + value
@@ -159,8 +158,7 @@ class Paper
 
     @col = adjusted
     @left -= value * @options.charWidth
-    @$canvas.css('-webkit-transform', "translate(#{-@col * @options.charWidth}px,#{-@row * @options.lineHeight}px)")
-
+    @$canvas.css('transform', "translate(#{-@col * @options.charWidth}px,#{-@row * @options.lineHeight}px)")
 
   printCharacter: (e)=>
     if @dontPrint
@@ -169,18 +167,12 @@ class Paper
     @ctx.save()
     @ctx.translate(@options.charWidth * @col, @options.lineHeight * @row + @options.lineHeight)
 
-    rotationRange = 0.12
+    rotationRange = 0.05
     rotation = -(rotationRange / 2) + Math.random() * rotationRange
 
     @ctx.rotate(rotation)
     @ctx.fillText(String.fromCharCode(e.charCode), 0, 0)
     @ctx.restore()
-
-    # XXX
-    texture = new THREE.Texture( @canvas )
-    texture.needsUpdate = true
-    mesh.material.map = texture
-    mesh.material.needsUpdate = true
 
     true
 
@@ -188,49 +180,5 @@ $txt = $('#text')
 $(document).on 'click', -> $txt.focus()
 $txt.focus()
 
-
-camera = undefined
-scene = undefined
-renderer = undefined
-geometry = undefined
-material = undefined
-mesh = undefined
-
-init =(texture)->
-  size =
-    width: window.innerWidth / 2
-    height: window.innerHeight
-
-  camera = new THREE.PerspectiveCamera(75, size.width / size.height, 1, 10000)
-  camera.position.z = 500
-  scene = new THREE.Scene()
-  #geometry = new THREE.CubeGeometry(500, 500, 500)
-  geometry = new THREE.CylinderGeometry(80, 80, 400, 25, 1, true)
-
-  material = new THREE.MeshBasicMaterial(
-    #color: 0xff0000
-    #wireframe: true
-    map: texture
-  )
-  mesh = new THREE.Mesh(geometry, material)
-  mesh.doubleSided = true
-  scene.add mesh
-  #renderer = new THREE.CanvasRenderer()
-  renderer = new THREE.WebGLRenderer( { antialias: true } );
-  renderer.setSize size.width, size.height
-  document.body.appendChild renderer.domElement
-
-animate = ->
-  requestAnimationFrame animate
-  #mesh.rotation.z = Math.PI / 2
-  #mesh.rotation.x -= 0.03
-  mesh.rotation.y -= 0.01
-  renderer.render scene, camera
-
 sounds = new SoundManager()
 paper = new Paper('paper-container')
-texture = new THREE.Texture( paper.canvas )
-texture.needsUpdate = true
-init(texture)
-animate()
-

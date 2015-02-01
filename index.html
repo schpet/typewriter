@@ -2,46 +2,27 @@
 <html>
   <head>
     <title>typewriter</title>
-    <link href='http://fonts.googleapis.com/css?family=Cutive+Mono' rel='stylesheet' type='text/css'>
+    <!--https://github.com/LeaVerou/prefixfree/issues/108#issuecomment-8864199-->
+    <link href='//fonts.googleapis.com/css?family=Cutive+Mono' rel='stylesheet prefetch' type='text/css' data-noprefix="true">
     <link href='css/style.css' rel='stylesheet' type='text/css'>
+    <script src="js/lib/prefixfree.min.js"></script>
   </head>
   <body>
 
-
-    <div class="cursor"></div>
+    <div id="paper-stacks"></div>
 
     <div id="paper-container" class="paper-container">
     </div>
+
+    <div class="cursor"></div>
 
     <div class="text-container">
       <textarea id="text" class="text" contenteditable></textarea>
     </div>
 
     <script src="js/lib/jquery-1.7.1.js"></script>
-    <script src="js/lib/stats.min.js"></script>
+    <script src="js/lib/prefixfree.jquery.js"></script>
     <script src="js/app.js"></script>
-
-    <script>
-      var stats = new Stats();
-      stats.setMode(0); // 0: fps, 1: ms
-
-      // Align top-left
-      stats.domElement.style.position = 'absolute';
-      stats.domElement.style.left = '0px';
-      stats.domElement.style.top = '0px';
-
-      document.body.appendChild( stats.domElement );
-
-      setInterval( function () {
-
-          stats.begin();
-
-          // your code goes here
-
-          stats.end();
-
-      }, 1000 / 60 );
-    </script>
 
     <script type="text/javascript">
       var _gaq = _gaq || [];

@@ -1,5 +1,5 @@
 * {
-  font-family: 'Cutive Mono', monospace !important;
+  font-family: 'Cutive Mono', 'Courier New', monospace !important;
   font-size: 22px;
   line-height: 2;
 }
@@ -32,7 +32,7 @@ html, body {
 }
 .paper-container canvas {
   border: 1px solid rgba(155,155,104, 0.6);
-  -webkit-transition: -webkit-transform 100ms 20ms;
+  transition: transform 80ms 20ms linear;
 }
 .cursor {
   position: fixed;

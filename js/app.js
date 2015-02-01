@@ -2,7 +2,7 @@
 (function() {
   "use strict";
 
-  var $txt, KeyTools, Paper, SoundManager, animate, camera, geometry, init, material, mesh, paper, renderer, scene, sounds, texture,
+  var $txt, KeyTools, Paper, SoundManager, paper, sounds,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   window.keys = {
@@ -171,7 +171,7 @@
       this.ctx.fillStyle = "rgba(255,255,204, 0.9)";
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.fillStyle = "rgba(55, 80, 0, 0.7)";
-      this.ctx.font = "20px monospace";
+      this.ctx.font = "20px Cutive Mono";
       this.col = 0;
       this.row = 0;
       this.dontPrint = false;
@@ -204,7 +204,7 @@
     Paper.prototype.adjustRow = function(value) {
       this.row += value;
       this.col = 0;
-      return this.$canvas.css('-webkit-transform', "translate(0," + (-this.row * this.options.lineHeight) + "px)");
+      return this.$canvas.css('transform', "translate(0," + (-this.row * this.options.lineHeight) + "px)");
     };
 
     Paper.prototype.adjustCol = function(value) {
@@ -223,25 +223,21 @@
       }
       this.col = adjusted;
       this.left -= value * this.options.charWidth;
-      return this.$canvas.css('-webkit-transform', "translate(" + (-this.col * this.options.charWidth) + "px," + (-this.row * this.options.lineHeight) + "px)");
+      return this.$canvas.css('transform', "translate(" + (-this.col * this.options.charWidth) + "px," + (-this.row * this.options.lineHeight) + "px)");
     };
 
     Paper.prototype.printCharacter = function(e) {
-      var rotation, rotationRange, texture;
+      var rotation, rotationRange;
       if (this.dontPrint) {
         return;
       }
       this.ctx.save();
       this.ctx.translate(this.options.charWidth * this.col, this.options.lineHeight * this.row + this.options.lineHeight);
-      rotationRange = 0.12;
+      rotationRange = 0.05;
       rotation = -(rotationRange / 2) + Math.random() * rotationRange;
       this.ctx.rotate(rotation);
       this.ctx.fillText(String.fromCharCode(e.charCode), 0, 0);
       this.ctx.restore();
-      texture = new THREE.Texture(this.canvas);
-      texture.needsUpdate = true;
-      mesh.material.map = texture;
-      mesh.material.needsUpdate = true;
       return true;
     };
 
@@ -257,57 +253,8 @@
 
   $txt.focus();
 
-  camera = void 0;
-
-  scene = void 0;
-
-  renderer = void 0;
-
-  geometry = void 0;
-
-  material = void 0;
-
-  mesh = void 0;
-
-  init = function(texture) {
-    var size;
-    size = {
-      width: window.innerWidth / 2,
-      height: window.innerHeight
-    };
-    camera = new THREE.PerspectiveCamera(75, size.width / size.height, 1, 10000);
-    camera.position.z = 500;
-    scene = new THREE.Scene();
-    geometry = new THREE.CylinderGeometry(80, 80, 400, 25, 1, true);
-    material = new THREE.MeshBasicMaterial({
-      map: texture
-    });
-    mesh = new THREE.Mesh(geometry, material);
-    mesh.doubleSided = true;
-    scene.add(mesh);
-    renderer = new THREE.WebGLRenderer({
-      antialias: true
-    });
-    renderer.setSize(size.width, size.height);
-    return document.body.appendChild(renderer.domElement);
-  };
-
-  animate = function() {
-    requestAnimationFrame(animate);
-    mesh.rotation.y -= 0.01;
-    return renderer.render(scene, camera);
-  };
-
   sounds = new SoundManager();
 
   paper = new Paper('paper-container');
-
-  texture = new THREE.Texture(paper.canvas);
-
-  texture.needsUpdate = true;
-
-  init(texture);
-
-  animate();
 
 }).call(this);
